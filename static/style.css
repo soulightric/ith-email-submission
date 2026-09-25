@@ -1,0 +1,452 @@
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --text: #1b2430;
+  --muted: #5b6675;
+  --border: #dce1e8;
+  --accent: #26436b;
+  --accent-hover: #1c3252;
+  --accent-soft: #edf1f6;
+
+  --status-diajukan: #5b6675;
+  --status-diproses: #a5670f;
+  --status-selesai: #157a3e;
+  --status-ditolak: #b3261e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+header.topbar {
+  background: var(--accent);
+  color: #fff;
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.logo-placeholder {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.logo-placeholder img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+header.topbar .brand {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+header.topbar .brand small {
+  display: block;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: #cdd8e6;
+  margin-top: 2px;
+}
+
+header.topbar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 6px 14px;
+  border-radius: 4px;
+}
+header.topbar a:hover { background: rgba(255,255,255,0.12); }
+
+main {
+  max-width: 1080px;
+  margin: 28px auto 60px;
+  padding: 0 24px;
+}
+
+button, input, select, textarea { font: inherit; }
+
+h1 { font-size: 21px; margin: 0 0 4px; }
+p.lead { color: var(--muted); font-size: 14px; margin-top: 0; margin-bottom: 20px; }
+
+.dashboard-counter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.dashboard-counter-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.dashboard-counter strong {
+  color: var(--accent);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.toolbar .field { flex: 1 1 150px; }
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: var(--muted); }
+.field input, .field select {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+  background: #fff;
+  color: var(--text);
+}
+
+.btn {
+  padding: 7px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn.secondary {
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.btn.secondary:hover { background: var(--accent-soft); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 6px;
+}
+
+thead th {
+  text-align: left;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #fafbfc; }
+
+.status-btn {
+  border: none;
+  background: none;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.status-diajukan { color: var(--status-diajukan); background: rgba(91,102,117,0.1); }
+.status-diproses { color: var(--status-diproses); background: rgba(165,103,15,0.1); }
+.status-selesai  { color: var(--status-selesai);  background: rgba(21,122,62,0.1); }
+.status-ditolak  { color: var(--status-ditolak);  background: rgba(179,38,30,0.1); }
+
+.note { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.empty { padding: 32px; text-align: center; color: var(--muted); }
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(20, 26, 34, 0.45);
+  align-items: center; justify-content: center;
+  z-index: 50;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 6px;
+  width: 420px;
+  max-width: 90vw;
+  padding: 22px 24px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+.modal-box h2 { font-size: 16px; margin: 0 0 14px; }
+.modal-box dl { margin: 0; }
+.modal-box dt { font-size: 12px; color: var(--muted); margin-top: 10px; }
+.modal-box dd { margin: 2px 0 0; font-size: 14px; }
+.modal-box .modal-close {
+  margin-top: 18px;
+  text-align: right;
+}
+
+form.inline { display: inline; }
+
+.login-wrap {
+  max-width: 360px;
+  margin: 90px auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 32px;
+}
+.login-wrap h1 { text-align: center; margin-bottom: 22px; }
+.login-wrap .field { margin-bottom: 14px; }
+.login-wrap input { width: 100%; }
+.login-wrap .btn { width: 100%; margin-top: 6px; }
+.error-msg {
+  background: rgba(179,38,30,0.08);
+  color: var(--status-ditolak);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13.5px;
+  margin-bottom: 14px;
+}
+
+/* Formulir pendaftaran usulan (gaya Google Form) */
+.gform-page-body { background: var(--bg); }
+.gform-page {
+  max-width: 640px;
+  margin: 40px auto 60px;
+  padding: 0 20px;
+}
+.gform-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.gform-header {
+  background: var(--accent);
+  color: #fff;
+  padding: 26px 28px 22px;
+  border-bottom: 8px solid var(--accent-hover);
+}
+.gform-header h1 { font-size: 19px; margin: 0 0 8px; }
+.gform-header p { margin: 0; font-size: 13.5px; color: #cdd8e6; line-height: 1.5; }
+.gform-body { padding: 24px 28px 28px; }
+.gform-field { margin-bottom: 20px; }
+.gform-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.gform-field .req { color: var(--status-ditolak); }
+.gform-field input,
+.gform-field select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  color: var(--text);
+}
+.gform-field input:focus,
+.gform-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(38,67,107,0.12);
+}
+.gform-field input[type="file"] { padding: 7px; }
+.field-help, .email-recommendation {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin: 6px 0 0;
+}
+.email-recommendation {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 9px 11px;
+  margin: -4px 0 20px;
+}
+.email-recommendation strong { color: var(--accent); }
+.gform-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.gform-actions .btn { min-height: 40px; }
+.gform-success { text-align: center; padding: 12px 0 6px; }
+.gform-success-icon {
+  width: 48px; height: 48px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: rgba(21,122,62,0.12);
+  color: var(--status-selesai);
+  font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gform-success h2 { font-size: 17px; margin: 0 0 8px; }
+.gform-success p { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+.gform-success .gform-actions { justify-content: center; }
+.gform-footer-link { text-align: center; margin-top: 16px; }
+.gform-footer-link a { color: var(--muted); font-size: 13px; text-decoration: none; }
+.gform-footer-link a:hover { color: var(--accent); }
+
+@media (max-width: 640px) {
+  header.topbar {
+    padding: 14px 16px;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  header.topbar .brand {
+    min-width: 0;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .brand-group { gap: 9px; }
+  .logo-placeholder {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    font-size: 9px;
+  }
+
+  header.topbar .brand small {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  header.topbar a {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  main {
+    margin: 20px auto 40px;
+    padding: 0 12px;
+  }
+
+  h1 { font-size: 19px; }
+  p.lead { font-size: 13px; margin-bottom: 14px; }
+
+  .dashboard-counter {
+    max-width: none;
+    width: 100%;
+    padding: 13px 14px;
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .toolbar .field,
+  .toolbar .field input,
+  .toolbar .field select,
+  .toolbar > .btn,
+  .toolbar > a.btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .toolbar > a.btn[style] { margin-left: 0 !important; }
+  .btn { min-height: 40px; padding: 9px 12px; }
+  .table-scroll { margin: 0 -1px; }
+  table { min-width: 720px; font-size: 13px; }
+  thead th, tbody td { padding: 9px 10px; }
+
+  .modal-overlay {
+    padding: 16px;
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .modal-box {
+    width: 100%;
+    max-width: none;
+    padding: 18px;
+    margin: auto 0;
+  }
+
+  .modal-box .modal-close,
+  .modal-box .modal-close .btn { width: 100%; }
+
+  .login-wrap {
+    width: calc(100% - 24px);
+    margin: 40px auto;
+    padding: 24px 18px;
+  }
+
+  .gform-page {
+    width: 100%;
+    margin: 16px auto 32px;
+    padding: 0 10px;
+  }
+
+  .gform-header { padding: 20px 18px 17px; }
+  .gform-header h1 { font-size: 18px; }
+  .gform-header p { font-size: 12.5px; }
+  .gform-body { padding: 20px 18px 22px; }
+  .gform-field input, .gform-field select { min-height: 42px; }
+  .gform-field input[type="file"] { font-size: 12px; }
+  .gform-actions { flex-direction: column-reverse; }
+  .gform-actions .btn { width: 100%; }
+}

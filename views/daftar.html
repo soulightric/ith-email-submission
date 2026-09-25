@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulir Usulan Akun Email - ITH</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="gform-page-body">
+  <div class="gform-page">
+    <div class="gform-card">
+      <div class="gform-header">
+        <h1>Formulir Usulan Akun Email Kampus</h1>
+        <p>Institut Teknologi Bacharuddin Jusuf Habibie &mdash; isi data di bawah untuk mengajukan pembuatan, perubahan, atau nonaktivasi akun email kampus.</p>
+      </div>
+      <div class="gform-body">
+        {{if .Success}}
+        <div class="gform-success">
+          <div class="gform-success-icon">&#10003;</div>
+          <h2>Tanggapan Anda telah tercatat</h2>
+          <p>Usulan akan diproses oleh admin. Kamu bisa memantau perkembangan statusnya di halaman publik kapan saja.</p>
+          <div class="gform-actions">
+            <a class="btn secondary" href="/daftar">Kirim tanggapan lain</a>
+            <a class="btn" href="/">Lihat status usulan</a>
+          </div>
+        </div>
+        {{else}}
+        {{if .Error}}<div class="error-msg">{{.Error}}</div>{{end}}
+        <form method="post" action="/daftar" enctype="multipart/form-data">
+          <div class="gform-field">
+            <label for="jenis_usulan">Jenis Email <span class="req">*</span></label>
+            <select id="jenis_usulan" name="jenis_usulan" required>
+              <option value="" disabled {{if not .Jenis}}selected{{end}}>Pilih jenis email</option>
+              {{range .JenisOptions}}
+              <option value="{{.}}" {{if eq . $.Jenis}}selected{{end}}>{{.}}</option>
+              {{end}}
+            </select>
+          </div>
+          <div class="gform-field">
+            <label for="nama">Nama Lengkap <span class="req">*</span></label>
+            <input type="text" id="nama" name="nama" value="{{.Nama}}" placeholder="Nama sesuai KTP/KTM" required>
+          </div>
+          <div class="gform-field">
+            <label for="nip_nim">NIP/NIM <span class="req">*</span></label>
+            <input type="text" id="nip_nim" name="nip_nim" value="{{.NipNim}}" placeholder="cth: 241011028" required>
+          </div>
+          <div class="gform-field">
+            <label for="prodi_unit">Program Studi / Unit Kerja <span class="req">*</span></label>
+            <input type="text" id="prodi_unit" name="prodi_unit" value="{{.ProdiUnit}}" placeholder="cth: Ilmu Komputer, atau UPT TIK" required>
+          </div>
+          <p class="email-recommendation" id="emailRecommendation" hidden>
+            Email yang dibuat: <strong id="recommendedEmail"></strong>
+          </p>
+          <div class="gform-field">
+            <label for="formulir">Upload Formulir Pengajuan <span class="req">*</span></label>
+            <input type="file" id="formulir" name="formulir" accept=".pdf,.doc,.docx" required>
+            <p class="field-help">Format PDF, DOC, atau DOCX. Maksimal 10 MB.</p>
+          </div>
+          <div class="gform-actions">
+            <button class="btn" type="submit">Kirim</button>
+          </div>
+        </form>
+        {{end}}
+      </div>
+    </div>
+    <p class="gform-footer-link"><a href="/">&larr; Kembali ke halaman status</a></p>
+  </div>
+  <script src="/static/app.js?v=3"></script>
+</body>
+</html>

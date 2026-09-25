@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Admin - Monitoring Email ITH</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-group">
+      <div class="logo-placeholder" aria-label="Tempat logo ITH">
+        <img src="https://db.etherthink.xyz/etherthink/logo.png" alt="Logo ITH">
+      </div>
+      <div class="brand">
+      Dashboard Admin - Monitoring Email Kampus
+      <small>Institut Teknologi Bacharuddin Jusuf Habibie</small>
+      </div>
+    </div>
+    <a href="/logout">Keluar</a>
+  </header>
+
+  <main>
+    <h1>Kelola Usulan Akun Email</h1>
+    <p class="lead">Maksimal 100 data terbaru sesuai filter. Klik status untuk detail, gunakan Aksi untuk mengubah status.</p>
+
+    <section class="dashboard-counter" aria-label="Ringkasan usulan">
+      <span class="dashboard-counter-label">Total Usulan Masuk</span>
+      <strong>{{.TotalRequests}}</strong>
+    </section>
+
+    <form class="toolbar" method="get" action="/admin/dashboard">
+      <div class="field">
+        <label for="q">Cari nama / NIM</label>
+        <input type="text" id="q" name="q" value="{{.Filter.Search}}" placeholder="nama atau NIM">
+      </div>
+      <div class="field">
+        <label for="jenis">Jenis Usulan</label>
+        <select id="jenis" name="jenis">
+          <option value="">Semua</option>
+          {{range .JenisOptions}}
+          <option value="{{.}}" {{if eq . $.Filter.Jenis}}selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div class="field">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+          <option value="">Semua</option>
+          {{range .StatusOptions}}
+          <option value="{{.}}" {{if eq . $.Filter.Status}}selected{{end}}>{{.}}</option>
+          {{end}}
+        </select>
+      </div>
+      <div class="field">
+        <label for="date_from">Dari Tanggal</label>
+        <input type="date" id="date_from" name="date_from" value="{{.Filter.DateFrom}}">
+      </div>
+      <div class="field">
+        <label for="date_to">Sampai Tanggal</label>
+        <input type="date" id="date_to" name="date_to" value="{{.Filter.DateTo}}">
+      </div>
+      <button class="btn" type="submit">Terapkan Filter</button>
+      <a class="btn secondary" href="/admin/dashboard">Reset</a>
+    </form>
+
+    {{if .Requests}}
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Jenis Usulan</th>
+          <th>Nama</th>
+          <th>NIP/NIM</th>
+          <th>Prodi/Unit</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range $i, $r := .Requests}}
+        <tr>
+          <td>{{inc $i}}</td>
+          <td>{{$r.JenisUsulan}}</td>
+          <td>{{$r.Nama}}</td>
+          <td>{{$r.NipNim}}</td>
+          <td>{{$r.ProdiUnit}}</td>
+          <td>
+            <button type="button" class="status-btn status-{{lower $r.Status}}"
+              data-nama="{{$r.Nama}}" data-nipnim="{{$r.NipNim}}"
+              data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
+              onclick="openDetailModal(this)">{{$r.Status}}</button>
+          </td>
+          <td>
+            {{if $r.FormulirPath}}
+            <a class="btn secondary" href="/admin/usulan/formulir?id={{$r.ID}}">Formulir</a>
+            {{end}}
+            <button type="button" class="btn secondary"
+              data-id="{{$r.ID}}" data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
+              onclick="openEditModal(this)">Ubah</button>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    </div>
+    <p class="note">Menampilkan {{len .Requests}} data (batas maksimum 100 baris).</p>
+    {{else}}
+    <div class="empty">Tidak ada data yang cocok dengan filter saat ini.</div>
+    {{end}}
+  </main>
+
+  <!-- Modal: lihat detail (read-only, sama seperti halaman public) -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-box">
+      <h2>Detail Usulan</h2>
+      <dl>
+        <dt>Nama</dt><dd id="modalNama"></dd>
+        <dt>NIP/NIM</dt><dd id="modalNipNim"></dd>
+        <dt>Status</dt><dd id="modalStatus"></dd>
+        <dt>Catatan / Detail</dt><dd id="modalDetail"></dd>
+      </dl>
+      <div class="modal-close"><button type="button" class="btn secondary" onclick="closeDetailModal()">Tutup</button></div>
+    </div>
+  </div>
+
+  <!-- Modal: ubah status (aksi admin) -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+      <h2>Ubah Status Usulan</h2>
+      <form method="post" action="/admin/usulan/update">
+        <input type="hidden" name="id" id="editId">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <input type="hidden" name="redirect" value="/admin/dashboard?{{.CurrentQuery}}">
+        <div class="field" style="margin-bottom:12px;">
+          <label for="editStatus">Status</label>
+          <select id="editStatus" name="status" required>
+            {{range .StatusOptions}}
+            <option value="{{.}}">{{.}}</option>
+            {{end}}
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label for="editDetail">Catatan / Detail</label>
+          <textarea id="editDetail" name="detail" rows="4" style="padding:8px;border:1px solid var(--border);border-radius:4px;font-family:inherit;"></textarea>
+        </div>
+        <div class="modal-close">
+          <button type="button" class="btn secondary" onclick="closeEditModal()">Batal</button>
+          <button type="submit" class="btn">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=3"></script>
+</body>
+</html>
