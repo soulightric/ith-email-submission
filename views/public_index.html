@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Monitoring Email Kampus - ITH</title>
+  <title>Monitoring Email Kampus \ ITH</title>
   <link rel="stylesheet" href="/static/style.css">
   <link rel="icon" type="image/png" href="https://db.etherthink.xyz/etherthink/logo.png">
 </head>
+
 <body>
   <header class="topbar">
     <div class="brand-group">
@@ -14,19 +16,19 @@
         <img src="https://db.etherthink.xyz/etherthink/logo.png" alt="Logo ITH">
       </div>
       <div class="brand">
-      Monitoring Pembuatan Email Kampus
-      <small>Institut Teknologi Bacharuddin Jusuf Habibie</small>
+        Monitoring Pembuatan Email Kampus ITH
+        <small>Institut Teknologi Bacharuddin Jusuf Habibie</small>
       </div>
     </div>
   </header>
 
   <main>
     <h1>Status Usulan Akun Email</h1>
-    <p class="lead">Menampilkan maksimal 100 usulan terbaru. Klik status pada tabel untuk melihat detailnya.</p>
+    <p class="lead">Menampilkan maksimal 100 usulan per halaman. Klik status pada tabel untuk melihat detailnya.</p>
 
     <form class="toolbar" method="get" action="/">
       <div class="field">
-        <label for="q">Cari nama atau NIP/NIM</label>
+        <label for="q">Cari Nama atau NIP/NIM</label>
         <input type="text" id="q" name="q" value="{{.Search}}" placeholder="cth: Fikri Sujud atau 241011028">
       </div>
       <button class="btn" type="submit">Cari</button>
@@ -36,55 +38,76 @@
 
     {{if .Requests}}
     <div class="table-scroll">
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Jenis Usulan</th>
-          <th>Nama</th>
-          <th>NIP/NIM</th>
-          <th>Prodi/Unit</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range $i, $r := .Requests}}
-        <tr>
-          <td>{{inc $i}}</td>
-          <td>{{$r.JenisUsulan}}</td>
-          <td>{{$r.Nama}}</td>
-          <td>{{$r.NipNim}}</td>
-          <td>{{$r.ProdiUnit}}</td>
-          <td>
-            <button type="button" class="status-btn status-{{lower $r.Status}}"
-              data-nama="{{$r.Nama}}" data-nipnim="{{$r.NipNim}}"
-              data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
-              onclick="openDetailModal(this)">{{$r.Status}}</button>
-          </td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Jenis Usulan</th>
+            <th>Nama</th>
+            <th>NIP/NIM</th>
+            <th>Prodi/Unit</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $i, $r := .Requests}}
+          <tr>
+            <td>{{add $i $.PageOffset | inc}}</td>
+            <td>{{$r.JenisUsulan}}</td>
+            <td>{{$r.Nama}}</td>
+            <td>{{$r.NipNim}}</td>
+            <td>{{$r.ProdiUnit}}</td>
+            <td>
+              <button type="button" class="status-btn status-{{lower $r.Status}}" data-nama="{{$r.Nama}}"
+                data-nipnim="{{$r.NipNim}}" data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
+                onclick="openDetailModal(this)">{{$r.Status}}</button>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
     </div>
-    <p class="note">Menampilkan {{len .Requests}} data (batas maksimum 100 baris terbaru).</p>
+    <p class="note">Menampilkan {{len .Requests}} dari {{.FilteredTotal}} data sesuai pencarian.</p>
+    {{if gt .TotalPages 1}}
+    <nav class="pagination" aria-label="Pagination usulan publik">
+      {{if .HasPrevious}}<a class="btn secondary" href="{{.PreviousURL}}">Sebelumnya</a>{{end}}
+      {{range .PageLinks}}
+      <a class="pagination-page {{if .Current}}active{{end}}" href="{{.URL}}">{{.Number}}</a>
+      {{end}}
+      {{if .HasNext}}<a class="btn secondary" href="{{.NextURL}}">Berikutnya</a>{{end}}
+    </nav>
+    {{end}}
     {{else}}
     <div class="empty">Tidak ada data yang cocok dengan pencarian.</div>
     {{end}}
   </main>
 
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <strong>Layanan UPT TIK ITH</strong>
+      <span>&copy; 2026 UPT TIK ITH, All rights reserved.</span>
+    </div>
+  </footer>
+
   <div class="modal-overlay" id="detailModal">
     <div class="modal-box">
       <h2>Detail Usulan</h2>
       <dl>
-        <dt>Nama</dt><dd id="modalNama"></dd>
-        <dt>NIP/NIM</dt><dd id="modalNipNim"></dd>
-        <dt>Status</dt><dd id="modalStatus"></dd>
-        <dt>Catatan / Detail</dt><dd id="modalDetail"></dd>
+        <dt>Nama</dt>
+        <dd id="modalNama"></dd>
+        <dt>NIP/NIM</dt>
+        <dd id="modalNipNim"></dd>
+        <dt>Status</dt>
+        <dd id="modalStatus"></dd>
+        <dt>Catatan / Detail</dt>
+        <dd id="modalDetail"></dd>
       </dl>
-      <div class="modal-close"><button type="button" class="btn secondary" onclick="closeDetailModal()">Tutup</button></div>
+      <div class="modal-close"><button type="button" class="btn secondary" onclick="closeDetailModal()">Tutup</button>
+      </div>
     </div>
   </div>
 
   <script src="/static/app.js?v=3"></script>
 </body>
+
 </html>

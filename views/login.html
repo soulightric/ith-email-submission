@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Masuk Admin - Monitoring Email ITH</title>
+  <title>Masuk Admin \ Monitoring Email ITH</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="https://db.etherthink.xyz/etherthink/logo.png">
 </head>
-<body>
+
+<body class="login-page-body">
   <div class="login-wrap">
     <h1>Masuk sebagai Admin</h1>
     {{if .Error}}<div class="error-msg">{{.Error}}</div>{{end}}
@@ -23,4 +26,5 @@
     </form>
   </div>
 </body>
+
 </html>

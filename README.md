@@ -93,6 +93,22 @@ Kalau nanti mau nambah fitur, aturan sederhananya:
    - Login admin: `http://localhost:8080/login`
    - Dashboard admin: `http://localhost:8080/admin/dashboard`
 
+### Data uji 250 pengajuan
+
+Untuk menguji dashboard dengan lebih dari 200 pengajuan, jalankan
+`seed_samples.sql` melalui `psql` atau Query Tool di pgAdmin:
+
+```bash
+psql -d monitoring_email -f seed_samples.sql
+```
+
+Data uji memiliki penanda `SEED-TEST-250` dan tidak memiliki file upload.
+Setelah pengujian selesai, hapus dengan query berikut:
+
+```sql
+DELETE FROM email_requests WHERE detail LIKE 'SEED-TEST-250%';
+```
+
 ## Catatan keamanan
 
 - Cookie session diberi flag `HttpOnly`, `Secure`, dan `SameSite=Strict`.

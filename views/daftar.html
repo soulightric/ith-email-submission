@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Formulir Usulan Akun Email - ITH</title>
+  <title>Formulir Usulan Akun Email \ ITH</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="https://db.etherthink.xyz/etherthink/logo.png">
 </head>
+
 <body class="gform-page-body">
   <div class="gform-page">
     <div class="gform-card">
       <div class="gform-header">
         <h1>Formulir Usulan Akun Email Kampus</h1>
-        <p>Institut Teknologi Bacharuddin Jusuf Habibie &mdash; isi data di bawah untuk mengajukan pembuatan, perubahan, atau nonaktivasi akun email kampus.</p>
+        <p>Institut Teknologi Bacharuddin Jusuf Habibie, isi data di bawah untuk mengajukan pembuatan, perubahan,
+          atau nonaktivasi akun email kampus.</p>
       </div>
       <div class="gform-body">
         {{if .Success}}
         <div class="gform-success">
           <div class="gform-success-icon">&#10003;</div>
           <h2>Tanggapan Anda telah tercatat</h2>
-          <p>Usulan akan diproses oleh admin. Kamu bisa memantau perkembangan statusnya di halaman publik kapan saja.</p>
+          <p>Usulan akan diproses oleh admin. Kamu bisa memantau perkembangan statusnya di halaman publik kapan saja.
+          </p>
           <div class="gform-actions">
             <a class="btn secondary" href="/daftar">Kirim tanggapan lain</a>
             <a class="btn" href="/">Lihat status usulan</a>
@@ -46,7 +51,8 @@
           </div>
           <div class="gform-field">
             <label for="prodi_unit">Program Studi / Unit Kerja <span class="req">*</span></label>
-            <input type="text" id="prodi_unit" name="prodi_unit" value="{{.ProdiUnit}}" placeholder="cth: Ilmu Komputer, atau UPT TIK" required>
+            <input type="text" id="prodi_unit" name="prodi_unit" value="{{.ProdiUnit}}"
+              placeholder="cth: Ilmu Komputer, atau UPT TIK" required>
           </div>
           <p class="email-recommendation" id="emailRecommendation" hidden>
             Email yang dibuat: <strong id="recommendedEmail"></strong>
@@ -67,4 +73,5 @@
   </div>
   <script src="/static/app.js?v=3"></script>
 </body>
+
 </html>

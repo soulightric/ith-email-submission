@@ -64,23 +64,48 @@ func scanEmailRequests(rows *sql.Rows) ([]EmailRequest, error) {
 // ListPublicEmailRequests mengambil maksimal 100 baris terbaru, dengan
 // pencarian berdasarkan nama atau NIP/NIM. Tidak ada kolom sensitif yang
 // dikembalikan (cukup untuk ditampilkan ke publik).
-func ListPublicEmailRequests(db *sql.DB, search string) ([]EmailRequest, error) {
+func ListPublicEmailRequests(db *sql.DB, search string, page, pageSize int) ([]EmailRequest, error) {
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 100
+	}
+	offset := (page - 1) * pageSize
 	const q = `
 		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, status, detail, created_at, updated_at
 		FROM email_requests
 		WHERE ($1 = '' OR nama ILIKE '%' || $1 || '%' OR nip_nim ILIKE '%' || $1 || '%')
 		ORDER BY created_at DESC
-		LIMIT 100`
-	rows, err := db.Query(q, search)
+		LIMIT $2 OFFSET $3`
+	rows, err := db.Query(q, search, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
 	return scanEmailRequests(rows)
 }
 
+// CountPublicEmailRequests menghitung usulan yang cocok dengan pencarian publik.
+func CountPublicEmailRequests(db *sql.DB, search string) (int, error) {
+	const q = `
+		SELECT COUNT(*)
+		FROM email_requests
+		WHERE ($1 = '' OR nama ILIKE '%' || $1 || '%' OR nip_nim ILIKE '%' || $1 || '%')`
+	var count int
+	err := db.QueryRow(q, search).Scan(&count)
+	return count, err
+}
+
 // ListAdminEmailRequests sama seperti versi public namun dengan filter
 // tambahan: jenis usulan, status, dan rentang tanggal pengajuan.
-func ListAdminEmailRequests(db *sql.DB, f AdminFilter) ([]EmailRequest, error) {
+func ListAdminEmailRequests(db *sql.DB, f AdminFilter, page, pageSize int) ([]EmailRequest, error) {
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 100
+	}
+	offset := (page - 1) * pageSize
 	const q = `
 		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, status, detail, created_at, updated_at
 		FROM email_requests
@@ -90,13 +115,29 @@ func ListAdminEmailRequests(db *sql.DB, f AdminFilter) ([]EmailRequest, error) {
 		  AND ($4::date IS NULL OR created_at < ($4::date + INTERVAL '1 day'))
 		  AND ($5 = '' OR nama ILIKE '%' || $5 || '%' OR nip_nim ILIKE '%' || $5 || '%')
 		ORDER BY created_at DESC
-		LIMIT 100`
+		LIMIT $6 OFFSET $7`
 	rows, err := db.Query(q,
-		nullable(f.Jenis), nullable(f.Status), nullable(f.DateFrom), nullable(f.DateTo), f.Search)
+		nullable(f.Jenis), nullable(f.Status), nullable(f.DateFrom), nullable(f.DateTo), f.Search, pageSize, offset)
 	if err != nil {
 		return nil, err
 	}
 	return scanEmailRequests(rows)
+}
+
+// CountAdminEmailRequests menghitung data sesuai filter untuk pagination.
+func CountAdminEmailRequests(db *sql.DB, f AdminFilter) (int, error) {
+	const q = `
+		SELECT COUNT(*)
+		FROM email_requests
+		WHERE ($1::text IS NULL OR jenis_usulan = $1)
+		  AND ($2::text IS NULL OR status = $2)
+		  AND ($3::date IS NULL OR created_at >= $3::date)
+		  AND ($4::date IS NULL OR created_at < ($4::date + INTERVAL '1 day'))
+		  AND ($5 = '' OR nama ILIKE '%' || $5 || '%' OR nip_nim ILIKE '%' || $5 || '%')`
+	var count int
+	err := db.QueryRow(q,
+		nullable(f.Jenis), nullable(f.Status), nullable(f.DateFrom), nullable(f.DateTo), f.Search).Scan(&count)
+	return count, err
 }
 
 // CountEmailRequests menghitung seluruh usulan yang sudah masuk.

@@ -29,6 +29,7 @@ func main() {
 	funcMap := template.FuncMap{
 		"lower": strings.ToLower,
 		"inc":   func(i int) int { return i + 1 },
+		"add":   func(a, b int) int { return a + b },
 	}
 
 	tmpl := routes.Templates{

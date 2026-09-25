@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"html/template"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -33,10 +34,20 @@ func (c *AdminController) Dashboard(w http.ResponseWriter, r *http.Request) {
 		DateTo:   r.URL.Query().Get("date_to"),
 		Search:   r.URL.Query().Get("q"),
 	}
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || page < 1 {
+		page = 1
+	}
+	const pageSize = 100
 
-	requests, err := models.ListAdminEmailRequests(c.DB, f)
+	requests, err := models.ListAdminEmailRequests(c.DB, f, page, pageSize)
 	if err != nil {
 		http.Error(w, "Gagal memuat data, silakan coba lagi", http.StatusInternalServerError)
+		return
+	}
+	filteredTotal, err := models.CountAdminEmailRequests(c.DB, f)
+	if err != nil {
+		http.Error(w, "Gagal menghitung halaman, silakan coba lagi", http.StatusInternalServerError)
 		return
 	}
 	totalRequests, err := models.CountEmailRequests(c.DB)
@@ -45,9 +56,54 @@ func (c *AdminController) Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	totalPages := (filteredTotal + pageSize - 1) / pageSize
+	if totalPages > 0 && page > totalPages {
+		page = totalPages
+		requests, err = models.ListAdminEmailRequests(c.DB, f, page, pageSize)
+		if err != nil {
+			http.Error(w, "Gagal memuat halaman, silakan coba lagi", http.StatusInternalServerError)
+			return
+		}
+	}
+	pageURL := func(number int) string {
+		values := url.Values{}
+		if f.Search != "" {
+			values.Set("q", f.Search)
+		}
+		if f.Jenis != "" {
+			values.Set("jenis", f.Jenis)
+		}
+		if f.Status != "" {
+			values.Set("status", f.Status)
+		}
+		if f.DateFrom != "" {
+			values.Set("date_from", f.DateFrom)
+		}
+		if f.DateTo != "" {
+			values.Set("date_to", f.DateTo)
+		}
+		values.Set("page", strconv.Itoa(number))
+		return "/admin/dashboard?" + values.Encode()
+	}
+	pageLinks := make([]map[string]interface{}, 0, totalPages)
+	for number := 1; number <= totalPages; number++ {
+		pageLinks = append(pageLinks, map[string]interface{}{"Number": number, "URL": pageURL(number), "Current": number == page})
+	}
+
 	data := map[string]interface{}{
 		"Requests":      requests,
 		"TotalRequests": totalRequests,
+		"FilteredTotal": filteredTotal,
+		"Page":          page,
+		"PageOffset":    (page - 1) * pageSize,
+		"TotalPages":    totalPages,
+		"HasPrevious":   page > 1,
+		"PreviousPage":  page - 1,
+		"PreviousURL":   pageURL(page - 1),
+		"HasNext":       page < totalPages,
+		"NextPage":      page + 1,
+		"NextURL":       pageURL(page + 1),
+		"PageLinks":     pageLinks,
 		"Filter":        f,
 		"StatusOptions": models.StatusOptions,
 		"JenisOptions":  models.JenisOptions,

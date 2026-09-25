@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Admin - Monitoring Email ITH</title>
+  <title>Dashboard Admin \ Monitoring Email ITH</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/png" href="https://db.etherthink.xyz/etherthink/logo.png">
 </head>
+
 <body>
   <header class="topbar">
     <div class="brand-group">
@@ -13,8 +16,8 @@
         <img src="https://db.etherthink.xyz/etherthink/logo.png" alt="Logo ITH">
       </div>
       <div class="brand">
-      Dashboard Admin - Monitoring Email Kampus
-      <small>Institut Teknologi Bacharuddin Jusuf Habibie</small>
+        Dashboard Admin - Monitoring Email Kampus
+        <small>Institut Teknologi Bacharuddin Jusuf Habibie</small>
       </div>
     </div>
     <a href="/logout">Keluar</a>
@@ -22,7 +25,8 @@
 
   <main>
     <h1>Kelola Usulan Akun Email</h1>
-    <p class="lead">Maksimal 100 data terbaru sesuai filter. Klik status untuk detail, gunakan Aksi untuk mengubah status.</p>
+    <p class="lead">Menampilkan maksimal 100 data per halaman sesuai filter. Klik status untuk detail, gunakan Aksi untuk mengubah
+      status.</p>
 
     <section class="dashboard-counter" aria-label="Ringkasan usulan">
       <span class="dashboard-counter-label">Total Usulan Masuk</span>
@@ -31,8 +35,8 @@
 
     <form class="toolbar" method="get" action="/admin/dashboard">
       <div class="field">
-        <label for="q">Cari nama / NIM</label>
-        <input type="text" id="q" name="q" value="{{.Filter.Search}}" placeholder="nama atau NIM">
+        <label for="q">Cari Nama / NIM</label>
+        <input type="text" id="q" name="q" value="{{.Filter.Search}}" placeholder="Nama atau NIM">
       </div>
       <div class="field">
         <label for="jenis">Jenis Usulan</label>
@@ -66,46 +70,53 @@
 
     {{if .Requests}}
     <div class="table-scroll">
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Jenis Usulan</th>
-          <th>Nama</th>
-          <th>NIP/NIM</th>
-          <th>Prodi/Unit</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{range $i, $r := .Requests}}
-        <tr>
-          <td>{{inc $i}}</td>
-          <td>{{$r.JenisUsulan}}</td>
-          <td>{{$r.Nama}}</td>
-          <td>{{$r.NipNim}}</td>
-          <td>{{$r.ProdiUnit}}</td>
-          <td>
-            <button type="button" class="status-btn status-{{lower $r.Status}}"
-              data-nama="{{$r.Nama}}" data-nipnim="{{$r.NipNim}}"
-              data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
-              onclick="openDetailModal(this)">{{$r.Status}}</button>
-          </td>
-          <td>
-            {{if $r.FormulirPath}}
-            <a class="btn secondary" href="/admin/usulan/formulir?id={{$r.ID}}">Formulir</a>
-            {{end}}
-            <button type="button" class="btn secondary"
-              data-id="{{$r.ID}}" data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
-              onclick="openEditModal(this)">Ubah</button>
-          </td>
-        </tr>
-        {{end}}
-      </tbody>
-    </table>
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Jenis Usulan</th>
+            <th>Nama</th>
+            <th>NIP/NIM</th>
+            <th>Prodi/Unit</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $i, $r := .Requests}}
+          <tr>
+            <td>{{add $i $.PageOffset | inc}}</td>
+            <td>{{$r.JenisUsulan}}</td>
+            <td>{{$r.Nama}}</td>
+            <td>{{$r.NipNim}}</td>
+            <td>{{$r.ProdiUnit}}</td>
+            <td>
+              <button type="button" class="status-btn status-{{lower $r.Status}}" data-nama="{{$r.Nama}}"
+                data-nipnim="{{$r.NipNim}}" data-status="{{$r.Status}}" data-detail="{{$r.Detail}}"
+                onclick="openDetailModal(this)">{{$r.Status}}</button>
+            </td>
+            <td>
+              {{if $r.FormulirPath}}
+              <a class="btn secondary" href="/admin/usulan/formulir?id={{$r.ID}}">Formulir</a>
+              {{end}}
+              <button type="button" class="btn secondary" data-id="{{$r.ID}}" data-status="{{$r.Status}}"
+                data-detail="{{$r.Detail}}" onclick="openEditModal(this)">Ubah</button>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
     </div>
-    <p class="note">Menampilkan {{len .Requests}} data (batas maksimum 100 baris).</p>
+    <p class="note">Menampilkan {{len .Requests}} dari {{.FilteredTotal}} data sesuai filter.</p>
+    {{if gt .TotalPages 1}}
+    <nav class="pagination" aria-label="Pagination usulan">
+      {{if .HasPrevious}}<a class="btn secondary" href="{{.PreviousURL}}">Sebelumnya</a>{{end}}
+      {{range .PageLinks}}
+      <a class="pagination-page {{if .Current}}active{{end}}" href="{{.URL}}">{{.Number}}</a>
+      {{end}}
+      {{if .HasNext}}<a class="btn secondary" href="{{.NextURL}}">Berikutnya</a>{{end}}
+    </nav>
+    {{end}}
     {{else}}
     <div class="empty">Tidak ada data yang cocok dengan filter saat ini.</div>
     {{end}}
@@ -116,12 +127,17 @@
     <div class="modal-box">
       <h2>Detail Usulan</h2>
       <dl>
-        <dt>Nama</dt><dd id="modalNama"></dd>
-        <dt>NIP/NIM</dt><dd id="modalNipNim"></dd>
-        <dt>Status</dt><dd id="modalStatus"></dd>
-        <dt>Catatan / Detail</dt><dd id="modalDetail"></dd>
+        <dt>Nama</dt>
+        <dd id="modalNama"></dd>
+        <dt>NIP/NIM</dt>
+        <dd id="modalNipNim"></dd>
+        <dt>Status</dt>
+        <dd id="modalStatus"></dd>
+        <dt>Catatan / Detail</dt>
+        <dd id="modalDetail"></dd>
       </dl>
-      <div class="modal-close"><button type="button" class="btn secondary" onclick="closeDetailModal()">Tutup</button></div>
+      <div class="modal-close"><button type="button" class="btn secondary" onclick="closeDetailModal()">Tutup</button>
+      </div>
     </div>
   </div>
 
@@ -143,7 +159,8 @@
         </div>
         <div class="field" style="margin-bottom:12px;">
           <label for="editDetail">Catatan / Detail</label>
-          <textarea id="editDetail" name="detail" rows="4" style="padding:8px;border:1px solid var(--border);border-radius:4px;font-family:inherit;"></textarea>
+          <textarea id="editDetail" name="detail" rows="4"
+            style="padding:8px;border:1px solid var(--border);border-radius:4px;font-family:inherit;"></textarea>
         </div>
         <div class="modal-close">
           <button type="button" class="btn secondary" onclick="closeEditModal()">Batal</button>
@@ -155,4 +172,5 @@
 
   <script src="/static/app.js?v=3"></script>
 </body>
+
 </html>
