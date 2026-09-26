@@ -45,7 +45,7 @@ function updateEmailRecommendation() {
     return;
   }
 
-  var namePart = nama.value.trim().toLowerCase().replace(/\s+/g, '');
+  var namePart = nama.value.trim().toLowerCase().replace(/[.\s]+/g, '');
   var nimPart = nipNim.value.trim();
   output.textContent = namePart && nimPart ? namePart + '.' + nimPart : 'nama.nim';
   container.hidden = false;

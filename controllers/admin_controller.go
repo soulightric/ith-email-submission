@@ -1,13 +1,18 @@
 package controllers
 
 import (
+	"compress/gzip"
 	"database/sql"
 	"html/template"
+	"io"
+	"mime"
 	"net/http"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"monitoring-email-ith/middleware"
 	"monitoring-email-ith/models"
@@ -166,17 +171,83 @@ func (c *AdminController) DownloadFormulir(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	path, err := models.GetFormulirPath(c.DB, id)
+	request, err := models.GetFormulirRequest(c.DB, id)
 	if err != nil {
 		http.Error(w, "Formulir tidak ditemukan", http.StatusNotFound)
 		return
 	}
-	cleanPath := filepath.Clean(path)
-	if path == "" || filepath.Dir(cleanPath) != "uploads" || strings.Contains(cleanPath, "..") {
+	cleanPath := filepath.Clean(request.FormulirPath)
+	if request.FormulirPath == "" || filepath.Dir(cleanPath) != "uploads" || strings.Contains(cleanPath, "..") {
 		http.Error(w, "Formulir tidak valid", http.StatusNotFound)
 		return
 	}
 
-	w.Header().Set("Content-Disposition", `attachment; filename="formulir-pengajuan`+filepath.Ext(cleanPath)+`"`)
+	documentExtension, compressed := storedDocumentExtension(cleanPath)
+	filename := formulirDownloadFilename(request, documentExtension)
+	w.Header().Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": filename}))
+	if compressed {
+		storedFile, err := os.Open(cleanPath)
+		if err != nil {
+			http.Error(w, "Formulir tidak ditemukan", http.StatusNotFound)
+			return
+		}
+		defer storedFile.Close()
+
+		reader, err := gzip.NewReader(storedFile)
+		if err != nil {
+			http.Error(w, "Formulir tidak dapat dibaca", http.StatusInternalServerError)
+			return
+		}
+		defer reader.Close()
+
+		contentType := mime.TypeByExtension(documentExtension)
+		if contentType == "" {
+			contentType = "application/octet-stream"
+		}
+		w.Header().Set("Content-Type", contentType)
+		_, _ = io.Copy(w, reader)
+		return
+	}
 	http.ServeFile(w, r, cleanPath)
+}
+
+func storedDocumentExtension(path string) (string, bool) {
+	storedExtension := filepath.Ext(path)
+	if strings.EqualFold(storedExtension, ".gz") {
+		originalPath := path[:len(path)-len(storedExtension)]
+		return filepath.Ext(originalPath), true
+	}
+	return storedExtension, false
+}
+
+func formulirDownloadFilename(request models.EmailRequest, extension string) string {
+	parts := []string{
+		"Formulir-Pengajuan",
+		safeFilenamePart(request.Nama),
+		safeFilenamePart(request.JenisUsulan),
+		safeFilenamePart(request.NipNim),
+		safeFilenamePart(request.ProdiUnit),
+		request.CreatedAt.Format("2006-01-02"),
+	}
+	return strings.Join(parts, "_") + strings.ToLower(extension)
+}
+
+func safeFilenamePart(value string) string {
+	normalized := strings.Map(func(char rune) rune {
+		switch char {
+		case '/', '\\', ':', '*', '?', '"', '<', '>', '|':
+			return ' '
+		default:
+			if unicode.IsControl(char) {
+				return -1
+			}
+			return char
+		}
+	}, value)
+	part := strings.Join(strings.Fields(normalized), "-")
+	part = strings.Trim(part, ".-")
+	if part == "" {
+		return "tanpa-data"
+	}
+	return part
 }

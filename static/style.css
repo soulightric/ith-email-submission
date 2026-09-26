@@ -26,6 +26,12 @@ body {
   line-height: 1.5;
 }
 
+.public-page-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 header.topbar {
   background: var(--accent);
   color: #fff;
@@ -94,6 +100,11 @@ main {
   max-width: 1080px;
   margin: 28px auto 60px;
   padding: 0 24px;
+}
+
+.public-page-body > main {
+  flex: 1;
+  width: 100%;
 }
 
 button,
@@ -469,6 +480,43 @@ form.inline {
   font-size: 13.5px;
   color: #cdd8e6;
   line-height: 1.5;
+}
+
+.gform-header .gform-description {
+  margin-bottom: 14px;
+}
+
+.gform-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.gform-links a {
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.gform-links a:hover {
+  color: #e1eaf5;
+}
+
+.gform-links a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.gform-header .gform-contact {
+  margin-top: 12px;
+}
+
+.gform-contact a {
+  color: #fff;
+  text-underline-offset: 3px;
 }
 
 .gform-body {

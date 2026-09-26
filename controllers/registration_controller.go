@@ -120,17 +120,9 @@ func (c *RegistrationController) Index(w http.ResponseWriter, r *http.Request) {
 		c.render(w, data)
 		return
 	}
-	storedPath := filepath.Join("uploads", hex.EncodeToString(randomName)+ext)
-	destination, err := os.Create(storedPath)
+	storedBasePath := filepath.Join("uploads", hex.EncodeToString(randomName))
+	storedPath, err := storeUploadedDocument(file, storedBasePath, ext, header.Size)
 	if err != nil {
-		data.Error = "Gagal menyimpan formulir."
-		c.render(w, data)
-		return
-	}
-	_, copyErr := io.Copy(destination, file)
-	closeErr := destination.Close()
-	if copyErr != nil || closeErr != nil {
-		_ = os.Remove(storedPath)
 		data.Error = "Gagal menyimpan formulir."
 		c.render(w, data)
 		return

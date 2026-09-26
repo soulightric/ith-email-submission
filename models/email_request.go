@@ -167,11 +167,18 @@ func CreateEmailRequest(db *sql.DB, jenis, nama, nipNim, prodiUnit, formulirPath
 	return id, err
 }
 
-// GetFormulirPath mengambil lokasi file formulir untuk akses admin terproteksi.
-func GetFormulirPath(db *sql.DB, id int) (string, error) {
+// GetFormulirRequest mengambil metadata dan lokasi formulir untuk akses admin terproteksi.
+func GetFormulirRequest(db *sql.DB, id int) (EmailRequest, error) {
+	var request EmailRequest
 	var path sql.NullString
-	err := db.QueryRow(`SELECT formulir_path FROM email_requests WHERE id = $1`, id).Scan(&path)
-	return path.String, err
+	err := db.QueryRow(`
+		SELECT jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, created_at
+		FROM email_requests
+		WHERE id = $1`, id).Scan(
+		&request.JenisUsulan, &request.Nama, &request.NipNim, &request.ProdiUnit,
+		&path, &request.CreatedAt)
+	request.FormulirPath = path.String
+	return request, err
 }
 
 // IsValidJenis mengecek input jenis usulan dari formulir terhadap whitelist

@@ -13,8 +13,13 @@
   <div class="gform-page">
     <div class="gform-card">
       <div class="gform-header">
-        <h1>Formulir Usulan Akun Email Kampus</h1>
-        <p>Institut Teknologi Bacharuddin Jusuf Habibie, isi data di bawah untuk mengajukan pembuatan akun email kampus.</p>
+        <h1>Formulir Pengajuan Akun Email Kampus</h1>
+        <p class="gform-description">Gunakan email alternatif yang sama dengan email yang dicantumkan pada pengajuan email domain @ith.ac.id.</p>
+        <div class="gform-links">
+          <a href="https://drive.google.com/drive/folders/1FwIy-Nc25EHIGJJx5k9xhmLP5WiayR3A" target="_blank" rel="noopener noreferrer">Unduh formulir pengajuan email</a>
+          <a href="https://docs.google.com/document/d/1MZNzCsVMFYG2ndiSnOfYBq7beMDPPvH1/edit" target="_blank" rel="noopener noreferrer">Baca panduan pengajuan email</a>
+        </div>
+        <p class="gform-contact">Jika ada pertanyaan silahkan email <a href="mailto:tik@ith.ac.id"><strong>tik@ith.ac.id</strong></a></p>
       </div>
       <div class="gform-body">
         {{if .Success}}
@@ -54,7 +59,7 @@
               placeholder="contoh: Ilmu Komputer, atau UPT TIK" required>
           </div>
           <p class="email-recommendation" id="emailRecommendation" hidden>
-            Email yang dibuat: <strong id="recommendedEmail"></strong>
+            Nama email yang dibuat: <strong id="recommendedEmail"></strong>
           </p>
           <div class="gform-field">
             <label for="formulir">Upload Formulir Pengajuan <span class="req">*</span></label>
@@ -70,7 +75,7 @@
     </div>
     <p class="gform-footer-link"><a href="/">Kembali ke halaman status</a></p>
   </div>
-  <script src="/static/app.js?v=3"></script>
+  <script src="/static/app.js?v=4"></script>
 </body>
 
 </html>

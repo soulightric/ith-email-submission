@@ -124,5 +124,5 @@ func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 		middleware.DestroySession(cookie.Value)
 	}
 	http.SetCookie(w, &http.Cookie{Name: middleware.CookieName, Value: "", Path: "/", MaxAge: -1})
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
