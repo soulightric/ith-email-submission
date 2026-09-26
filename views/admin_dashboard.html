@@ -30,7 +30,7 @@
 
     <section class="dashboard-counter" aria-label="Ringkasan usulan">
       <span class="dashboard-counter-label">Total Usulan Masuk</span>
-      <strong>{{.TotalRequests}}</strong>
+      <strong id="requestTotal">{{.TotalRequests}}</strong>
     </section>
 
     <form class="toolbar" method="get" action="/admin/dashboard">
@@ -68,6 +68,7 @@
       <a class="btn secondary" href="/admin/dashboard">Reset</a>
     </form>
 
+    <section id="requestResults">
     {{if .Requests}}
     <div class="table-scroll">
       <table>
@@ -120,6 +121,7 @@
     {{else}}
     <div class="empty">Tidak ada data yang cocok dengan filter saat ini.</div>
     {{end}}
+    </section>
   </main>
 
   <!-- Modal: lihat detail (read-only, sama seperti halaman public) -->
@@ -170,7 +172,7 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=3"></script>
+  <script src="/static/app.js?v=4"></script>
 </body>
 
 </html>

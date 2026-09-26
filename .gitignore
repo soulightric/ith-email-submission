@@ -1,3 +1,6 @@
 uploads/*
 !uploads/.gitkeep
 .env
+tmp/*
+!tmp/.gitkeep
+.air.toml

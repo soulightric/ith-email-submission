@@ -16,7 +16,7 @@
         <img src="https://db.etherthink.xyz/etherthink/logo.png" alt="Logo ITH">
       </div>
       <div class="brand">
-        Monitoring Pembuatan Email Kampus ITH
+        Pengajuan Pembuatan Email Kampus ITH
         <small>Institut Teknologi Bacharuddin Jusuf Habibie</small>
       </div>
     </div>
@@ -29,13 +29,14 @@
     <form class="toolbar" method="get" action="/">
       <div class="field">
         <label for="q">Cari Nama atau NIP/NIM</label>
-        <input type="text" id="q" name="q" value="{{.Search}}" placeholder="cth: Fikri Sujud atau 241011028">
+        <input type="text" id="q" name="q" value="{{.Search}}" placeholder="contoh: Fikri Sujud atau 241011028">
       </div>
       <button class="btn" type="submit">Cari</button>
       {{if .Search}}<a class="btn secondary" href="/">Reset</a>{{end}}
       <a class="btn secondary" href="/daftar" style="margin-left:auto;">+ Ajukan Usulan Baru</a>
     </form>
 
+    <section id="requestResults">
     {{if .Requests}}
     <div class="table-scroll">
       <table>
@@ -80,6 +81,7 @@
     {{else}}
     <div class="empty">Tidak ada data yang cocok dengan pencarian.</div>
     {{end}}
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -107,7 +109,7 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=3"></script>
+  <script src="/static/app.js?v=4"></script>
 </body>
 
 </html>

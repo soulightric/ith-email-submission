@@ -14,8 +14,7 @@
     <div class="gform-card">
       <div class="gform-header">
         <h1>Formulir Usulan Akun Email Kampus</h1>
-        <p>Institut Teknologi Bacharuddin Jusuf Habibie, isi data di bawah untuk mengajukan pembuatan, perubahan,
-          atau nonaktivasi akun email kampus.</p>
+        <p>Institut Teknologi Bacharuddin Jusuf Habibie, isi data di bawah untuk mengajukan pembuatan akun email kampus.</p>
       </div>
       <div class="gform-body">
         {{if .Success}}
@@ -47,12 +46,12 @@
           </div>
           <div class="gform-field">
             <label for="nip_nim">NIP/NIM <span class="req">*</span></label>
-            <input type="text" id="nip_nim" name="nip_nim" value="{{.NipNim}}" placeholder="cth: 241011028" required>
+            <input type="text" id="nip_nim" name="nip_nim" value="{{.NipNim}}" placeholder="contoh: 241011028" required>
           </div>
           <div class="gform-field">
             <label for="prodi_unit">Program Studi / Unit Kerja <span class="req">*</span></label>
             <input type="text" id="prodi_unit" name="prodi_unit" value="{{.ProdiUnit}}"
-              placeholder="cth: Ilmu Komputer, atau UPT TIK" required>
+              placeholder="contoh: Ilmu Komputer, atau UPT TIK" required>
           </div>
           <p class="email-recommendation" id="emailRecommendation" hidden>
             Email yang dibuat: <strong id="recommendedEmail"></strong>
@@ -69,7 +68,7 @@
         {{end}}
       </div>
     </div>
-    <p class="gform-footer-link"><a href="/">&larr; Kembali ke halaman status</a></p>
+    <p class="gform-footer-link"><a href="/">Kembali ke halaman status</a></p>
   </div>
   <script src="/static/app.js?v=3"></script>
 </body>

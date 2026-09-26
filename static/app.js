@@ -59,3 +59,33 @@ function updateEmailRecommendation() {
   }
 });
 updateEmailRecommendation();
+
+function refreshRequestResults() {
+  var currentResults = document.getElementById('requestResults');
+  if (!currentResults || document.hidden || document.querySelector('.modal-overlay.open')) return;
+
+  var active = document.activeElement;
+  if (active && /^(INPUT|SELECT|TEXTAREA)$/.test(active.tagName)) return;
+
+  fetch(window.location.href, { cache: 'no-store', credentials: 'same-origin' })
+    .then(function (response) {
+      if (!response.ok) throw new Error('Gagal memuat pembaruan usulan');
+      return response.text();
+    })
+    .then(function (html) {
+      var updatedDocument = new DOMParser().parseFromString(html, 'text/html');
+      var updatedResults = updatedDocument.getElementById('requestResults');
+      if (!updatedResults || !currentResults.isConnected) return;
+
+      if (currentResults.innerHTML !== updatedResults.innerHTML) {
+        currentResults.replaceWith(document.importNode(updatedResults, true));
+      }
+
+      var currentTotal = document.getElementById('requestTotal');
+      var updatedTotal = updatedDocument.getElementById('requestTotal');
+      if (currentTotal && updatedTotal) currentTotal.textContent = updatedTotal.textContent;
+    })
+    .catch(function () {});
+}
+
+window.setInterval(refreshRequestResults, 15000);

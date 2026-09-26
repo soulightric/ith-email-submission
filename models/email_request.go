@@ -76,7 +76,7 @@ func ListPublicEmailRequests(db *sql.DB, search string, page, pageSize int) ([]E
 		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, status, detail, created_at, updated_at
 		FROM email_requests
 		WHERE ($1 = '' OR nama ILIKE '%' || $1 || '%' OR nip_nim ILIKE '%' || $1 || '%')
-		ORDER BY created_at DESC
+		ORDER BY created_at ASC, id ASC
 		LIMIT $2 OFFSET $3`
 	rows, err := db.Query(q, search, pageSize, offset)
 	if err != nil {
@@ -114,7 +114,7 @@ func ListAdminEmailRequests(db *sql.DB, f AdminFilter, page, pageSize int) ([]Em
 		  AND ($3::date IS NULL OR created_at >= $3::date)
 		  AND ($4::date IS NULL OR created_at < ($4::date + INTERVAL '1 day'))
 		  AND ($5 = '' OR nama ILIKE '%' || $5 || '%' OR nip_nim ILIKE '%' || $5 || '%')
-		ORDER BY created_at DESC
+		ORDER BY created_at ASC, id ASC
 		LIMIT $6 OFFSET $7`
 	rows, err := db.Query(q,
 		nullable(f.Jenis), nullable(f.Status), nullable(f.DateFrom), nullable(f.DateTo), f.Search, pageSize, offset)
