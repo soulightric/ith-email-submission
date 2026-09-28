@@ -5,3 +5,4 @@ tmp/*
 !tmp/.gitkeep
 .air.toml
 seed_samples.sql
+ith-email.service
