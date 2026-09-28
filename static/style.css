@@ -216,16 +216,16 @@ p.lead {
 
 .btn.back {
   padding: 7px 16px;
-  background: #ff3b3b;
-  color: var(--accent-soft);
-  border: 1px solid var(--accent);
+  background: #dc2626;
+  color: #fff;
+  border: 1px solid #dc2626;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
 }
 
 .btn.back:hover {
-  background: #c03333;
+  background: #b91c1c;
 }
 
 table {
@@ -595,7 +595,7 @@ form.inline {
 .gform-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex;
+  justify-content: space-between;
 }
 
 .gform-actions .btn {
@@ -803,7 +803,7 @@ form.inline {
   }
 
   .gform-actions {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 
   .gform-actions .btn {
