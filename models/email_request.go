@@ -23,7 +23,7 @@ type EmailRequest struct {
 
 // StatusOptions & JenisOptions dipakai untuk dropdown filter dan form aksi.
 var StatusOptions = []string{"Diajukan", "Diproses", "Selesai", "Ditolak"}
-var JenisOptions = []string{"Dosen / Pegawai ITH", "Mahasiswa ITH", "Lembaga ITH"}
+var JenisOptions = []string{"Dosen / Pegawai ITH", "Mahasiswa ITH", "Lembaga / Unit ITH"}
 
 // AdminFilter menampung parameter filter dashboard admin.
 type AdminFilter struct {

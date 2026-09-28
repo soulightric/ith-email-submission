@@ -214,6 +214,20 @@ p.lead {
   background: var(--accent-soft);
 }
 
+.btn.back {
+  padding: 7px 16px;
+  background: #ff3b3b;
+  color: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn.back:hover {
+  background: #c03333;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -581,7 +595,7 @@ form.inline {
 .gform-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: flex;
 }
 
 .gform-actions .btn {
@@ -619,21 +633,6 @@ form.inline {
 
 .gform-success .gform-actions {
   justify-content: center;
-}
-
-.gform-footer-link {
-  text-align: center;
-  margin-top: 16px;
-}
-
-.gform-footer-link a {
-  color: var(--muted);
-  font-size: 13px;
-  text-decoration: none;
-}
-
-.gform-footer-link a:hover {
-  color: var(--accent);
 }
 
 @media (max-width: 640px) {
