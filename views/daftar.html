@@ -58,8 +58,13 @@
             <input type="text" id="prodi_unit" name="prodi_unit" value="{{.ProdiUnit}}"
               placeholder="contoh: Ilmu Komputer, atau UPT TIK" required>
           </div>
+          <div class="gform-field">
+            <label for="contact_email">Email Aktif untuk Menerima Kredensial <span class="req">*</span></label>
+            <input type="email" id="contact_email" name="contact_email" value="{{.ContactEmail}}"
+              placeholder="email@gmail.com" autocomplete="email" required>
+          </div>
           <p class="email-recommendation" id="emailRecommendation" hidden>
-            Nama email yang dibuat: <strong id="recommendedEmail"></strong>
+            Email yang dibuat: <strong id="recommendedEmail"></strong>
           </p>
           <div class="gform-field">
             <label for="formulir">Upload Formulir Pengajuan <span class="req">*</span></label>
@@ -75,7 +80,7 @@
       </div>
     </div>
   </div>
-  <script src="/static/app.js?v=4"></script>
+  <script src="/static/app.js?v=6"></script>
 </body>
 
 </html>

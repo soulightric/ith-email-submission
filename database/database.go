@@ -27,6 +27,10 @@ func Connect(cfg config.Config) (*sql.DB, error) {
 		_ = conn.Close()
 		return nil, fmt.Errorf("gagal menyiapkan kolom formulir: %w", err)
 	}
+	if _, err := conn.Exec(`ALTER TABLE email_requests ADD COLUMN IF NOT EXISTS contact_email VARCHAR(254) NOT NULL DEFAULT ''`); err != nil {
+		_ = conn.Close()
+		return nil, fmt.Errorf("gagal menyiapkan kolom email kontak: %w", err)
+	}
 	conn.SetMaxOpenConns(20)
 	conn.SetMaxIdleConns(5)
 	return conn, nil

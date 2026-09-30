@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"net/mail"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +34,7 @@ type registrationForm struct {
 	Nama         string
 	NipNim       string
 	ProdiUnit    string
+	ContactEmail string
 	FormulirName string
 	Error        string
 	Success      bool
@@ -51,6 +53,7 @@ func (c *RegistrationController) Index(w http.ResponseWriter, r *http.Request) {
 		Nama:         strings.TrimSpace(r.FormValue("nama")),
 		NipNim:       strings.TrimSpace(r.FormValue("nip_nim")),
 		ProdiUnit:    strings.TrimSpace(r.FormValue("prodi_unit")),
+		ContactEmail: strings.TrimSpace(r.FormValue("contact_email")),
 	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
@@ -100,8 +103,10 @@ func (c *RegistrationController) Index(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case !models.IsValidJenis(data.Jenis):
 		data.Error = "Pilih jenis usulan yang valid."
-	case data.Nama == "" || data.NipNim == "" || data.ProdiUnit == "":
+	case data.Nama == "" || data.NipNim == "" || data.ProdiUnit == "" || data.ContactEmail == "":
 		data.Error = "Semua kolom wajib diisi."
+	case !validEmailAddress(data.ContactEmail):
+		data.Error = "Alamat email kontak tidak valid."
 	}
 	if data.Error != "" {
 		c.render(w, data)
@@ -128,7 +133,7 @@ func (c *RegistrationController) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := models.CreateEmailRequest(c.DB, data.Jenis, data.Nama, data.NipNim, data.ProdiUnit, storedPath); err != nil {
+	if _, err := models.CreateEmailRequest(c.DB, data.Jenis, data.Nama, data.NipNim, data.ProdiUnit, data.ContactEmail, storedPath); err != nil {
 		_ = os.Remove(storedPath)
 		data.Error = "Gagal menyimpan usulan, silakan coba lagi."
 		c.render(w, data)
@@ -136,6 +141,11 @@ func (c *RegistrationController) Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.render(w, registrationForm{JenisOptions: models.JenisOptions, Success: true})
+}
+
+func validEmailAddress(value string) bool {
+	address, err := mail.ParseAddress(value)
+	return err == nil && address.Address == value
 }
 
 func (c *RegistrationController) render(w http.ResponseWriter, data registrationForm) {

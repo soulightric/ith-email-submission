@@ -14,6 +14,7 @@ type EmailRequest struct {
 	Nama         string
 	NipNim       string
 	ProdiUnit    string
+	ContactEmail string
 	FormulirPath string
 	Status       string // Diajukan, Diproses, Selesai, Ditolak
 	Detail       string
@@ -50,7 +51,7 @@ func scanEmailRequests(rows *sql.Rows) ([]EmailRequest, error) {
 		var r EmailRequest
 		var detail sql.NullString
 		var formulirPath sql.NullString
-		if err := rows.Scan(&r.ID, &r.JenisUsulan, &r.Nama, &r.NipNim, &r.ProdiUnit,
+		if err := rows.Scan(&r.ID, &r.JenisUsulan, &r.Nama, &r.NipNim, &r.ProdiUnit, &r.ContactEmail,
 			&formulirPath, &r.Status, &detail, &r.CreatedAt, &r.UpdatedAt); err != nil {
 			return nil, err
 		}
@@ -73,7 +74,7 @@ func ListPublicEmailRequests(db *sql.DB, search string, page, pageSize int) ([]E
 	}
 	offset := (page - 1) * pageSize
 	const q = `
-		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, status, detail, created_at, updated_at
+		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, ''::varchar AS contact_email, formulir_path, status, detail, created_at, updated_at
 		FROM email_requests
 		WHERE ($1 = '' OR nama ILIKE '%' || $1 || '%' OR nip_nim ILIKE '%' || $1 || '%')
 		ORDER BY created_at ASC, id ASC
@@ -107,7 +108,7 @@ func ListAdminEmailRequests(db *sql.DB, f AdminFilter, page, pageSize int) ([]Em
 	}
 	offset := (page - 1) * pageSize
 	const q = `
-		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, status, detail, created_at, updated_at
+		SELECT id, jenis_usulan, nama, nip_nim, prodi_unit, contact_email, formulir_path, status, detail, created_at, updated_at
 		FROM email_requests
 		WHERE ($1::text IS NULL OR jenis_usulan = $1)
 		  AND ($2::text IS NULL OR status = $2)
@@ -157,14 +158,22 @@ func UpdateEmailRequestStatus(db *sql.DB, id int, status, detail string) error {
 
 // CreateEmailRequest menyimpan usulan baru dari formulir publik pendaftaran.
 // Status awal selalu "Diajukan" sampai ditindaklanjuti admin di dashboard.
-func CreateEmailRequest(db *sql.DB, jenis, nama, nipNim, prodiUnit, formulirPath string) (int, error) {
+func CreateEmailRequest(db *sql.DB, jenis, nama, nipNim, prodiUnit, contactEmail, formulirPath string) (int, error) {
 	const q = `
-		INSERT INTO email_requests (jenis_usulan, nama, nip_nim, prodi_unit, formulir_path, status)
-		VALUES ($1, $2, $3, $4, $5, 'Diajukan')
+		INSERT INTO email_requests (jenis_usulan, nama, nip_nim, prodi_unit, contact_email, formulir_path, status)
+		VALUES ($1, $2, $3, $4, $5, $6, 'Diajukan')
 		RETURNING id`
 	var id int
-	err := db.QueryRow(q, jenis, nama, nipNim, prodiUnit, formulirPath).Scan(&id)
+	err := db.QueryRow(q, jenis, nama, nipNim, prodiUnit, contactEmail, formulirPath).Scan(&id)
 	return id, err
+}
+
+// GetEmailRequestContact mengambil alamat penerima, jenis, dan status usulan.
+func GetEmailRequestContact(db *sql.DB, id int) (EmailRequest, error) {
+	var request EmailRequest
+	err := db.QueryRow(`SELECT contact_email, jenis_usulan, status FROM email_requests WHERE id = $1`, id).
+		Scan(&request.ContactEmail, &request.JenisUsulan, &request.Status)
+	return request, err
 }
 
 // GetFormulirRequest mengambil metadata dan lokasi formulir untuk akses admin terproteksi.

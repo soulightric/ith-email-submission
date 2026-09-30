@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS email_requests (
     nama          VARCHAR(150) NOT NULL,
     nip_nim       VARCHAR(50)  NOT NULL,
     prodi_unit    VARCHAR(150) NOT NULL,
+    contact_email VARCHAR(254) NOT NULL DEFAULT '',
     formulir_path TEXT,
     status        VARCHAR(30)  NOT NULL DEFAULT 'Diajukan', -- Diajukan, Diproses, Selesai, Ditolak
     detail        TEXT,
@@ -21,6 +22,7 @@ CREATE TABLE IF NOT EXISTS email_requests (
 );
 
 ALTER TABLE email_requests ADD COLUMN IF NOT EXISTS formulir_path TEXT;
+ALTER TABLE email_requests ADD COLUMN IF NOT EXISTS contact_email VARCHAR(254) NOT NULL DEFAULT '';
 
 CREATE INDEX IF NOT EXISTS idx_email_requests_nama    ON email_requests (nama);
 CREATE INDEX IF NOT EXISTS idx_email_requests_nip_nim ON email_requests (nip_nim);

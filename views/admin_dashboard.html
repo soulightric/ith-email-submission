@@ -101,7 +101,9 @@
               <a class="btn secondary" href="/admin/usulan/formulir?id={{$r.ID}}">Formulir</a>
               {{end}}
               <button type="button" class="btn secondary" data-id="{{$r.ID}}" data-status="{{$r.Status}}"
-                data-detail="{{$r.Detail}}" onclick="openEditModal(this)">Ubah</button>
+                data-detail="{{$r.Detail}}" data-contact-email="{{$r.ContactEmail}}" data-nama="{{$r.Nama}}"
+                data-nipnim="{{$r.NipNim}}"
+                data-jenis="{{$r.JenisUsulan}}" onclick="openEditModal(this)">Ubah</button>
             </td>
           </tr>
           {{end}}
@@ -164,6 +166,21 @@
           <textarea id="editDetail" name="detail" rows="4"
             style="padding:8px;border:1px solid var(--border);border-radius:4px;font-family:inherit;"></textarea>
         </div>
+        <div id="completionCredentials" hidden>
+          <div class="field" style="margin-bottom:12px;">
+            <label for="completionContactEmail">Email penerima kredensial</label>
+            <input type="email" id="completionContactEmail" name="contact_email" autocomplete="email">
+            <small>Untuk pengajuan lama yang belum memiliki email kontak, isi alamat penerima di sini.</small>
+          </div>
+          <div class="field" style="margin-bottom:12px;">
+            <label for="accountEmail" id="accountEmailLabel">Nama email akun</label>
+            <input type="email" id="accountEmail" name="account_email" placeholder="nama@ith.ac.id" autocomplete="off">
+          </div>
+          <div class="field" style="margin-bottom:12px;">
+            <label for="loginPassword">Password login</label>
+            <input type="password" id="loginPassword" name="login_password" autocomplete="new-password">
+          </div>
+        </div>
         <div class="modal-close">
           <button type="button" class="btn secondary" onclick="closeEditModal()">Batal</button>
           <button type="submit" class="btn">Simpan</button>
@@ -172,7 +189,7 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=4"></script>
+  <script src="/static/app.js?v=6"></script>
 </body>
 
 </html>

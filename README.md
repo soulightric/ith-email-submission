@@ -76,7 +76,17 @@ Kalau nanti mau nambah fitur, aturan sederhananya:
    DB_NAME=monitoring_email
    DB_SSLMODE=disable
    PORT=8080
+  SMTP_HOST=smtp.example.com
+  SMTP_PORT=587
+  SMTP_USER=tik@ith.ac.id
+  SMTP_PASSWORD=<password-aplikasi-mailbox>
+  SMTP_FROM=tik@ith.ac.id
    ```
+
+  SMTP harus mendukung STARTTLS. Saat admin mengubah status pengajuan menjadi
+  `Selesai`, aplikasi mengirim akun `@ith.ac.id` dan password login ke email
+  kontak pemohon (pengajuan lama dapat diisi penerimanya dari modal admin).
+  Password hanya dipakai untuk mengirim dan tidak disimpan di database.
 
 4. Ambil dependency dan jalankan:
    ```bash

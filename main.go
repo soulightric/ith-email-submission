@@ -10,6 +10,7 @@ import (
 
 	"monitoring-email-ith/config"
 	"monitoring-email-ith/database"
+	"monitoring-email-ith/mailer"
 	"monitoring-email-ith/routes"
 )
 
@@ -39,7 +40,10 @@ func main() {
 		Registration: template.Must(template.New("daftar.html").Funcs(funcMap).ParseFiles("views/daftar.html")),
 	}
 
-	handler := routes.New(db, tmpl)
+	handler := routes.New(db, tmpl, mailer.Config{
+		Host: cfg.SMTPHost, Port: cfg.SMTPPort, Username: cfg.SMTPUser,
+		Password: cfg.SMTPPass, From: cfg.SMTPFrom,
+	})
 
 	addr := ":" + cfg.Port
 	log.Printf("Server berjalan di http://localhost%s", addr)

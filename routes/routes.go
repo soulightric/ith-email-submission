@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"monitoring-email-ith/controllers"
+	"monitoring-email-ith/mailer"
 	"monitoring-email-ith/middleware"
 )
 
@@ -21,9 +22,9 @@ type Templates struct {
 // New merangkai seluruh Controller jadi satu http.Handler siap pakai.
 // Ini satu-satunya tempat yang perlu dilihat untuk tahu endpoint apa saja
 // yang tersedia dan mana yang dilindungi login.
-func New(db *sql.DB, t Templates) http.Handler {
+func New(db *sql.DB, t Templates, mailConfig mailer.Config) http.Handler {
 	public := controllers.NewPublicController(db, t.Public)
-	admin := controllers.NewAdminController(db, t.Admin)
+	admin := controllers.NewAdminController(db, t.Admin, mailConfig)
 	auth := controllers.NewAuthController(db, t.Login)
 	registration := controllers.NewRegistrationController(db, t.Registration)
 

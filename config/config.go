@@ -15,6 +15,11 @@ type Config struct {
 	DBName     string
 	DBSSLMode  string
 	Port       string
+	SMTPHost   string
+	SMTPPort   int
+	SMTPUser   string
+	SMTPPass   string
+	SMTPFrom   string
 }
 
 func Load() Config {
@@ -26,6 +31,11 @@ func Load() Config {
 		DBName:     getEnv("DB_NAME", "monitoring_email"),
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
 		Port:       getEnv("PORT", "8080"),
+		SMTPHost:   getEnv("SMTP_HOST", ""),
+		SMTPPort:   getEnvInt("SMTP_PORT", 587),
+		SMTPUser:   getEnv("SMTP_USER", ""),
+		SMTPPass:   getEnv("SMTP_PASSWORD", ""),
+		SMTPFrom:   getEnv("SMTP_FROM", "tik@ith.ac.id"),
 	}
 }
 

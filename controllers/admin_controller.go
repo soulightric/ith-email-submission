@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"html/template"
 	"io"
+	"log"
 	"mime"
 	"net/http"
 	"net/url"
@@ -14,6 +15,7 @@ import (
 	"strings"
 	"unicode"
 
+	"monitoring-email-ith/mailer"
 	"monitoring-email-ith/middleware"
 	"monitoring-email-ith/models"
 )
@@ -23,10 +25,11 @@ import (
 type AdminController struct {
 	DB   *sql.DB
 	Tmpl *template.Template
+	Mail mailer.Config
 }
 
-func NewAdminController(db *sql.DB, tmpl *template.Template) *AdminController {
-	return &AdminController{DB: db, Tmpl: tmpl}
+func NewAdminController(db *sql.DB, tmpl *template.Template, mailConfig mailer.Config) *AdminController {
+	return &AdminController{DB: db, Tmpl: tmpl, Mail: mailConfig}
 }
 
 // Dashboard mirip tabel public, ditambah kolom Aksi dan filter berdasarkan
@@ -151,6 +154,30 @@ func (c *AdminController) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	detail := r.FormValue("detail")
+	if status == "Selesai" {
+		request, err := models.GetEmailRequestContact(c.DB, id)
+		if err != nil {
+			http.Error(w, "Pengajuan tidak ditemukan", http.StatusNotFound)
+			return
+		}
+		if request.Status != "Selesai" {
+			accountEmail := strings.TrimSpace(r.FormValue("account_email"))
+			password := r.FormValue("login_password")
+			destination := strings.TrimSpace(r.FormValue("contact_email"))
+			if request.ContactEmail != "" {
+				destination = request.ContactEmail
+			}
+			if !validRequestAccountEmail(accountEmail, request.JenisUsulan) || !validEmailAddress(destination) || password == "" || strings.ContainsAny(password, "\r\n") {
+				http.Error(w, "Domain email akun harus sesuai jenis pengajuan; email penerima dan password yang valid wajib diisi saat menyelesaikan pengajuan", http.StatusBadRequest)
+				return
+			}
+			if err := mailer.SendCredentials(c.Mail, destination, accountEmail, password); err != nil {
+				log.Printf("Pengiriman kredensial SMTP gagal untuk pengajuan %d: %v", id, err)
+				http.Error(w, "Email kredensial gagal dikirim. Periksa konfigurasi SMTP lalu coba lagi.", http.StatusBadGateway)
+				return
+			}
+		}
+	}
 	if err := models.UpdateEmailRequestStatus(c.DB, id, status, detail); err != nil {
 		http.Error(w, "Gagal memperbarui data", http.StatusInternalServerError)
 		return
@@ -161,6 +188,16 @@ func (c *AdminController) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 		redirect = "/admin/dashboard"
 	}
 	http.Redirect(w, r, redirect, http.StatusSeeOther)
+}
+
+func validRequestAccountEmail(value, requestType string) bool {
+	if !validEmailAddress(value) {
+		return false
+	}
+	if requestType == "Mahasiswa ITH" {
+		return strings.HasSuffix(strings.ToLower(value), "@mahasiswa.ith.ac.id")
+	}
+	return strings.HasSuffix(strings.ToLower(value), "@ith.ac.id")
 }
 
 // DownloadFormulir mengunduh file formulir hanya untuk admin yang sudah login.
